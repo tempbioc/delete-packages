@@ -1,0 +1,17 @@
+Package: deletepackages
+Type: Package
+Title: Delete packages from the server
+Version: 0.1.0
+Authors@R: person("Jeroen", "Ooms", ,"jeroen@berkeley.edu", 
+    role = c("aut", "cre"), comment = c(ORCID = "0000-0002-4035-0289"))
+Description: Deletes packages that are no longer in the universe from 
+	the CRANlike server.
+Encoding: UTF-8
+LazyData: true
+Imports:
+    curl,
+    sys,
+    jsonlite,
+    gert,
+RoxygenNote: 7.1.1
+License: Apache License 2.0

@@ -1,0 +1,15 @@
+name: 'Delete packages'
+description: 'Delete removed packages from the package server'
+inputs:
+  monorepo_url:
+    description: 'Git URL with monorepo'
+    required: true
+  cranlike_url:
+    description: 'URL to the cranlike server packages api'
+    required: true
+runs:
+  using: 'docker'
+  image: 'docker://runiverse/delete-packages'
+  args:
+    - ${{ inputs.monorepo_url }}
+    - ${{ inputs.cranlike_url }}
