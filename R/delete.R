@@ -44,6 +44,10 @@ delete_from_server <- function(monorepo_url, cranlike_url){
     repos <- list_ropensci_docs_repos()
     packages <- c(submodules, 'ropensci-docs.github.io')
     deleted <- repos[!(tolower(repos) %in% tolower(packages))]
+    missing <- packages[!(tolower(packages) %in% tolower(repos))]
+    if(length(missing)){
+      caterr("Missing ropensci-docs for packages: ", paste(missing, collapse = ', '), "\n")
+    }
     if(length(deleted) > 10){
       stop("Found more than 5 deleted repos. Something may be wrong?")
     }
@@ -56,7 +60,7 @@ delete_from_server <- function(monorepo_url, cranlike_url){
         })
       }
     } else {
-      cat("ropensci-docs already in sync!")
+      cat("ropensci-docs already in sync!\n")
     }
   }
 }
