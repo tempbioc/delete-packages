@@ -38,6 +38,34 @@ delete_from_server <- function(monorepo_url, cranlike_url){
       })
     }
   }
+
+  # Delete docs for packages that were removed
+  if(basename(monorepo_url) == 'ropensci'){
+    repos <- list_ropensci_docs_repos()
+    packages <- c(submodules, 'ropensci-docs.github.io')
+    deleted <- repos[!(tolower(repos) %in% tolower(packages))]
+    if(length(deleted) > 10){
+      stop("Found more than 5 deleted repos. Something may be wrong?")
+    }
+    if(length(deleted)){
+      caterr("Found docs for removed packages: ", paste(deleted, collapse = ', '), "\n")
+      if(utils::askYesNo("are you sure you want to delete these?")){
+        lapply(deleted, function(name){
+          message("Deleting: ropensci-docs/", name)
+          gh::gh(paste0('/repos/ropensci-docs/', name), .method = 'DELETE')
+        })
+      }
+    } else {
+      cat("ropensci-docs already in sync!")
+    }
+  }
+}
+
+list_ropensci_docs_repos <- function(){
+  repos <- gh::gh('/users/ropensci-docs/repos?per_page=100', .limit = 1e6)
+  vapply(repos, function(x){
+    return(x$name)
+  }, character(1))
 }
 
 parse_res <- function(res){
