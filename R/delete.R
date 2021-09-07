@@ -60,7 +60,7 @@ delete_from_server <- function(monorepo_url, cranlike_url){
         })
       }
     } else {
-      cat("ropensci-docs already in sync!\n")
+      cat("Nothing to delete in ropensci-docs!\n")
     }
   }
 }
