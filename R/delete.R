@@ -21,7 +21,7 @@ delete_from_server <- function(monorepo_url, cranlike_url){
   setwd(repo)
 
   # Get current submodules
-  out <- sys::exec_internal('git', c('config', '--file', '.gitmodules', '--get-regexp', 'path'))
+  out <- sys::exec_internal('git', c('config', '--file', '.gitmodules', '--get-regexp', '\\.path$'))
   submodules <- vapply(strsplit(sys::as_text(out$stdout), ' ', fixed = TRUE), `[[`, character(1), 2)
   caterr("Current submodules:", paste(submodules, collapse = ', '), '\n\n')
   pkgs <- jsonlite::fromJSON(cranlike_url)
