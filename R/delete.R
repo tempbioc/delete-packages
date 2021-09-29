@@ -53,6 +53,7 @@ delete_from_server <- function(monorepo_url, cranlike_url){
     }
     if(length(deleted)){
       caterr("Found docs for removed packages: ", paste(deleted, collapse = ', '), "\n")
+      caterr("whoami: ", gh::gh_whoami()$login, "\n")
       if(utils::askYesNo("are you sure you want to delete these?")){
         lapply(deleted, function(name){
           message("Deleting: ropensci-docs/", name)
