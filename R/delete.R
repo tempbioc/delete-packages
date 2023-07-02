@@ -15,7 +15,7 @@ delete_from_server <- function(monorepo_url, cranlike_url){
   # Clone and cd into the monorepo
   repo <- file.path(tempdir(), paste0(basename(monorepo_url), '-universe'))
   unlink(repo, recursive = TRUE)
-  gert::git_clone(monorepo_url, path = repo)
+  sys::exec_internal("git", c("clone", monorepo_url, repo))
   pwd <- getwd()
   on.exit(setwd(pwd))
   setwd(repo)
