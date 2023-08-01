@@ -4,12 +4,10 @@
 \alias{delete_from_server}
 \title{Delete packages}
 \usage{
-delete_from_server(monorepo_url, cranlike_url)
+delete_from_server(universe)
 }
 \arguments{
-\item{monorepo_url}{git url of the monorepo}
-
-\item{cranlike_url}{url to the cranlike server packages api}
+\item{universe}{name of the universe}
 }
 \description{
 Delete packages from the server.

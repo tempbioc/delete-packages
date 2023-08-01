@@ -4,16 +4,16 @@
 #'
 #' @export
 #' @rdname sync_ropensci
-#' @param monorepo_url git url of the monorepo
-#' @param cranlike_url url to the cranlike server packages api
-delete_from_server <- function(monorepo_url, cranlike_url){
+#' @param universe name of the universe
+delete_from_server <- function(universe){
   # Some input validation
+  monorepo_url <- sprintf('https://github.com/r-universe/%s', universe)
+  cranlike_url <- sprintf('https://%s.r-universe.dev', universe)
   userpwd <- Sys.getenv("CRANLIKEPWD", NA)
   if(is.na(userpwd)) stop("No CRANLIKEPWD set, cannot deploy")
-  if(basename(cranlike_url) != 'packages') stop("cranlike_url should end in /packages")
 
   # Clone and cd into the monorepo
-  repo <- file.path(tempdir(), paste0(basename(monorepo_url), '-universe'))
+  repo <- file.path(tempdir(), paste0(universe, '-universe'))
   unlink(repo, recursive = TRUE)
   sys::exec_internal("git", c("clone", monorepo_url, repo))
   pwd <- getwd()
@@ -24,7 +24,7 @@ delete_from_server <- function(monorepo_url, cranlike_url){
   out <- sys::exec_internal('git', c('config', '--file', '.gitmodules', '--get-regexp', '\\.path$'))
   submodules <- vapply(strsplit(sys::as_text(out$stdout), ' ', fixed = TRUE), `[[`, character(1), 2)
   caterr("Current submodules:", paste(submodules, collapse = ', '), '\n\n')
-  pkgs <- jsonlite::fromJSON(cranlike_url)
+  pkgs <- jsonlite::fromJSON(paste0(cranlike_url, '/api/ls'))
   deleted <- pkgs[!(pkgs %in% submodules)]
   if(length(deleted)){
     caterr("Removed packages:", paste(deleted, collapse = ', '), '\n\n')
@@ -32,11 +32,13 @@ delete_from_server <- function(monorepo_url, cranlike_url){
       lapply(deleted, function(package){
         message("Deleting: ", package)
         h <- curl::new_handle(customrequest = 'DELETE', userpwd = userpwd)
-        url <- sprintf("%s/%s", cranlike_url, package)
+        url <- paste0(cranlike_url, '/packages/', package)
         out <- parse_res(curl::curl_fetch_memory(url, handle = h))
         stopifnot(out$Package == package)
       })
     }
+  } else {
+    caterr("Everything is up to date.\n")
   }
 
   # Delete docs for packages that were removed
