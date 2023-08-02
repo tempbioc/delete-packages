@@ -23,6 +23,7 @@ delete_from_server <- function(universe){
   # Get current submodules
   out <- sys::exec_internal('git', c('config', '--file', '.gitmodules', '--get-regexp', '\\.path$'))
   submodules <- vapply(strsplit(sys::as_text(out$stdout), ' ', fixed = TRUE), `[[`, character(1), 2)
+  submodules <- unique(c(submodules, list.files())) # Just in case...
   caterr("Current submodules:", paste(submodules, collapse = ', '), '\n\n')
   pkgs <- jsonlite::fromJSON(paste0(cranlike_url, '/api/ls'))
   deleted <- pkgs[!(pkgs %in% submodules)]
@@ -42,7 +43,7 @@ delete_from_server <- function(universe){
   }
 
   # Delete docs for packages that were removed
-  if(basename(monorepo_url) == 'ropensci'){
+  if(universe == 'ropensci'){
     repos <- list_ropensci_docs_repos()
     packages <- c(submodules, 'ropensci-docs.github.io')
     deleted <- repos[!(tolower(repos) %in% tolower(packages))]
