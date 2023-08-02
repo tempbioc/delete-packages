@@ -20,6 +20,10 @@ delete_from_server <- function(universe){
   on.exit(setwd(pwd))
   setwd(repo)
 
+  # Sanity checks
+  stopifnot(file.exists(".registry"))
+  stopifnot(file.exists(".gitmodules"))
+
   # Get current submodules
   out <- sys::exec_internal('git', c('config', '--file', '.gitmodules', '--get-regexp', '\\.path$'))
   submodules <- vapply(strsplit(sys::as_text(out$stdout), ' ', fixed = TRUE), `[[`, character(1), 2)
