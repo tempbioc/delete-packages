@@ -7,7 +7,7 @@
 #' @param universe name of the universe
 delete_from_server <- function(universe){
   # Some input validation
-  monorepo_url <- sprintf('https://github.com/r-universe/%s', universe)
+  monorepo_url <- sprintf('https://github.com/tempbioc/%s', universe)
   cranlike_url <- sprintf('https://%s.r-universe.dev', universe)
   userpwd <- Sys.getenv("CRANLIKEPWD", NA)
   if(is.na(userpwd)) stop("No CRANLIKEPWD set, cannot deploy")
